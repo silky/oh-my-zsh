@@ -27,7 +27,8 @@ local user="%(!.%{$fg[white]%}.%{$fg[white]%})%n@%{$reset_color%}"
 # Compacted $PWD
 local pwd="%{$fg[yellow]%}%c>%{$reset_color%}"
 
-PROMPT='${time} ${user}${pwd}'
+PROMPT='${time} ${user}%{$fg[cyan]%}$(branch)%{$reset_color%}${pwd}'
+branch_thingy=""
 
 # elaborate exitcode on the right when >0
 return_code_enabled="%(?..%{$fg[red]%}%? ↵%{$reset_color%})"
@@ -45,6 +46,13 @@ function accept-line-or-clear-warning () {
 		return_code=$return_code_enabled
 	fi
 	zle accept-line
+}
+
+function branch () {
+    # Only run "foo" if it is possible to run "foo". Lame but works.
+    # The "br" command just returns the current branch in whatever typo of
+    # repo I happen to be in.
+    ~/bin/br 1>/dev/null 2>&1 && br | awk '{ print $1" " }'
 }
 
 function battery_charge  () {
